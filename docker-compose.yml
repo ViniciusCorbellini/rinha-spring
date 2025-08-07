@@ -1,0 +1,116 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+
+    # Variáveis de ambiente para inicialização
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_api_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+    # Volume para persistência dos dados do banco
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    # Mapeamento de porta (host:container)
+    # Permite acessar o banco via localhost:5433
+    ports:
+      - "5433:5432"
+
+    # Healthcheck para garantir que o banco está pronto
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres_api_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ----------------------------------------------------------
+  # Primeira instância da aplicação Spring
+  # Conecta ao banco de dados e expõe a porta 3001 internamente
+  # ----------------------------------------------------------
+  app1:
+    build: .
+    container_name: app1
+
+    # Variáveis de ambiente para configuração do app
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: postgres_api_db
+      HOSTNAME: app1
+
+    # Expondo porta para a rede interna (usada pelo NGINX)
+    expose:
+      - "3001"
+
+    # Só inicia quando o Postgres estiver saudável
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # Segunda instância da aplicação Spring
+  # Replica a configuração de app1 para balanceamento de carga
+  # ----------------------------------------------------------
+  app2:
+    build: .
+    container_name: app2
+
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: postgres_api_db
+      HOSTNAME: app2
+
+    expose:
+      - "3002"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # Serviço NGINX que age como balanceador de carga
+  # Distribui requisições entre app1 e app2
+  # ----------------------------------------------------------
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+
+    # Mapeia porta do host para o container
+    # A configuração do NGINX precisa escutar nessa porta
+    ports:
+      - "9999:9999"
+
+    # Monta o arquivo de configuração customizado
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+    # Garante que NGINX só suba após os apps
+    depends_on:
+      - app1
+      - app2
+
+    restart: unless-stopped
+
+# ------------------------------------------------------------
+# Volumes nomeados para persistência de dados
+# pgdata é usado pelo serviço postgres
+# ------------------------------------------------------------
+volumes:
+  pgdata:
