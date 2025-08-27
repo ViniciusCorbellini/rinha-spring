@@ -17,41 +17,37 @@ public class ExtractRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public ExtractDTO getExtractByClientId(int clientId) {
+    public ExtractDTO getExtractByClientId(int accountId) {
         String sql = """
-                    WITH acc AS (
-                        SELECT id, balance AS total, limite, now() AS data_extrato
-                        FROM accounts
-                        WHERE id = ?
-                    ), trx AS (
-                        SELECT amount, type, description, created_at
-                        FROM transactions
-                        WHERE account_id = ?
-                        ORDER BY created_at DESC
-                        LIMIT 10
-                    )
-                    SELECT
-                        acc.total,
-                        acc.limite,
-                        acc.data_extrato,
-                        json_agg(
-                            json_build_object(
-                                'amount', trx.amount,
-                                'type', trx.type,
-                                'description', trx.description,
-                                'created_at', trx.created_at
-                            )
-                            ORDER BY trx.created_at DESC
-                        ) FILTER (WHERE trx.created_at IS NOT NULL) AS ultimas_transacoes
-                    FROM acc
-                    LEFT JOIN trx ON TRUE
-                    GROUP BY acc.id, acc.total, acc.limite, acc.data_extrato;
-                """;
+            WITH acc AS (
+                SELECT id, balance AS total, limite, now() AS data_extrato
+                FROM accounts
+                WHERE id = ?
+            ),
+            latest_transactions AS (
+                SELECT amount, type, description, created_at
+                FROM transactions
+                WHERE account_id = (SELECT id FROM acc)
+                ORDER BY created_at DESC
+                LIMIT 10
+            )
+            SELECT
+                acc.total,
+                acc.limite,
+                acc.data_extrato,
+                (
+                    SELECT json_agg(json_build_object(
+                                'amount', t.amount,
+                                'type', t.type,
+                                'description', t.description,
+                                'created_at', t.created_at
+                            ))
+                    FROM latest_transactions t
+                ) AS ultimas_transacoes
+            FROM acc;
+        """;
 
-        return jdbcTemplate.query(sql, ps -> {
-            ps.setInt(1, clientId);
-            ps.setInt(2, clientId);
-        }, rs -> {
+        return jdbcTemplate.query(sql, ps -> ps.setInt(1, accountId), rs -> {
             if (rs.next()) {
                 BigDecimal total = rs.getBigDecimal("total");
                 BigDecimal limite = rs.getBigDecimal("limite");

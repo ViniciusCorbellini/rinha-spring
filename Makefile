@@ -29,3 +29,12 @@ jar:
 run:
 	mvnw clean package -DskipTests
 	docker-compose up --build
+
+#Sobe os serviços em modo daemon, sem usar terminal
+up_background:
+	docker-compose up -d --build
+
+# Roda os comandos necessários para rodar os testes do zero,
+# truncando a tabela e esperando o gatling em uma imagem leve de linux
+test:
+	docker-compose run --rm gatling
