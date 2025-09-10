@@ -1,15 +1,15 @@
 package com.rinha_backend.spring.repository;
 
 
-import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
-import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
-import com.rinha_backend.spring.dto.account.AccountData;
+import java.math.BigDecimal;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import com.rinha_backend.spring.dto.account.AccountData;
+import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
+import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
 
 @Repository
 public class TransactionRepository {    
@@ -20,7 +20,7 @@ public class TransactionRepository {
     }   
 
     @Transactional
-    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto) throws IllegalArgumentException{
+    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto) throws IllegalArgumentException, RuntimeException{
         AccountData account = jdbcTemplate.queryForObject(
             "SELECT limite, balance FROM accounts WHERE id = ? FOR UPDATE",
             (rs, rowNum) -> new AccountData(

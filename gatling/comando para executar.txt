@@ -1,0 +1,14 @@
+docker compose down -v && ^
+docker compose --compatibility up -d --build && ^
+docker exec postgres psql -U postgres -d postgres_api_db -v ON_ERROR_STOP=1 ^
+  -c "TRUNCATE TABLE transactions" ^
+  -c "UPDATE accounts SET balance = 0" ^
+&& cmd /c "cd /d gatling && mvnw.cmd gatling:test -Dgatling.simulationClass=simulations.RinhaBackendCrebitosSimulation"
+
+
+docker compose down -v; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+docker compose --compatibility up -d --build; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+docker exec postgres psql -U postgres -d postgres_api_db -v ON_ERROR_STOP=1 `
+  -c "TRUNCATE TABLE transactions" `
+  -c "UPDATE accounts SET balance = 0"; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+cmd /c "cd /d gatling && mvnw.cmd gatling:test -Dgatling.simulationClass=simulations.RinhaBackendCrebitosSimulation"

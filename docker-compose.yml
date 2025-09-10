@@ -26,11 +26,11 @@ services:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
 
-    # deploy:
-    #     resources:
-    #         limits:
-    #             cpus: "0.56"
-    #             memory: "410MB"
+    deploy:
+        resources:
+            limits:
+                cpus: "0.56"
+                memory: "90MB"
 
     # Mapeamento de porta (host:container)
     # Permite acessar o banco via localhost:5433
@@ -72,11 +72,11 @@ services:
       postgres:
         condition: service_healthy
 
-    # deploy:
-    #     resources:
-    #         limits:
-    #             cpus: "0.37"
-    #             memory: "55MB"
+    deploy:
+        resources:
+            limits:
+                cpus: "0.37"
+                memory: "220MB"
 
     restart: unless-stopped
 
@@ -104,11 +104,11 @@ services:
       postgres:
         condition: service_healthy
 
-    # deploy:
-    #     resources:
-    #         limits:
-    #             cpus: "0.37"
-    #             memory: "55MB"
+    deploy:
+        resources:
+            limits:
+                cpus: "0.37"
+                memory: "220MB"
 
     restart: unless-stopped
 
@@ -134,11 +134,11 @@ services:
       - app1
       - app2
 
-    # deploy:
-    #     resources:
-    #         limits:
-    #             cpus: "0.2"
-    #             memory: "30MB"
+    deploy:
+        resources:
+            limits:
+                cpus: "0.2"
+                memory: "20MB"
 
     restart: unless-stopped
 

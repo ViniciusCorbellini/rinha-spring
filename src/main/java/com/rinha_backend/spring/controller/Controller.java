@@ -23,18 +23,14 @@ public class Controller {
     private final ExtractService extractService;
     private final TransactionService transactionService;
 
-    private final AppInfo app;
-
-    public Controller(ExtractService extractService, TransactionService transactionService, AppInfo app) {
+    public Controller(ExtractService extractService, TransactionService transactionService) {
         this.extractService = extractService;
         this.transactionService = transactionService;
-        this.app = app;
     }
 
     @GetMapping("/{id}/extrato")
     public ResponseEntity<?> getExtrato(@PathVariable Integer id) {
         if(id == null || id <= 0) return ResponseEntity.unprocessableEntity().body("{ \"error\": \"ID inválido\" }");
-        System.out.println("Hello, world! App - " + app.getAppName() + " || port: " + app.getAppPort());
         try{
             ExtractDTO extract = extractService.getExtract(id);
             return ResponseEntity.ok(extract);
@@ -49,7 +45,6 @@ public class Controller {
     public ResponseEntity<?> createTransaction(
             @PathVariable Integer id,
             @RequestBody TransactionRequestDTO dto) {
-        System.out.println("Hello, world! App - " + app.getAppName() + " || port: " + app.getAppPort());
         try {
             TransactionResponseDTO response = transactionService.processTransaction(id, dto);
             return ResponseEntity.ok(response);

@@ -11,6 +11,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <encoding>UTF-8</encoding>
     <maven.compiler.release>11</maven.compiler.release>
     <scala.version>2.13.12</scala.version>
     <gatling.version>3.14.3</gatling.version>
@@ -58,6 +60,12 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <version>4.8.1</version>
+        <configuration>
+        <args>
+          <arg>-encoding</arg>
+          <arg>UTF-8</arg>
+        </args>
+      </configuration>
         <executions>
           <execution>
             <goals>
@@ -73,6 +81,7 @@
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <release>${maven.compiler.release}</release>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
       <!-- Resources plugin -->

@@ -1,3 +1,5 @@
+package simulations
+
 import scala.concurrent.duration._
 
 import scala.util.Random
