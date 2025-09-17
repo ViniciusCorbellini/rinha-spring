@@ -58,7 +58,11 @@ public class ExtractRepository {
                         ? TransactionDTO.fromJsonArray(json)
                         : List.of();
 
-                ExtractDTO.SaldoDto saldo = new ExtractDTO.SaldoDto(total, limite, dataExtrato);
+                ExtractDTO.SaldoDto saldo = new ExtractDTO.SaldoDto(
+                        total != null ? total.toPlainString() : null,
+                        limite != null ? limite.toPlainString() : null,
+                        dataExtrato
+                );
 
                 return new ExtractDTO(saldo, transacoes);
             } else {

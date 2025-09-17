@@ -9,8 +9,8 @@ public record ExtractDTO(
         List<TransactionDTO> ultimas_transacoes
 ) {
     public record SaldoDto(
-            BigDecimal total,
-            BigDecimal limite,
+            String total,
+            String limite,
             LocalDateTime data_extrato
     ) {}
 }
