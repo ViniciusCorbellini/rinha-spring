@@ -1,6 +1,5 @@
 package com.rinha_backend.spring.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
