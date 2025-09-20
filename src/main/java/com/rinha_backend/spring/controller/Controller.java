@@ -5,8 +5,8 @@ import com.rinha_backend.spring.service.ExtractService;
 import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
 import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
 import com.rinha_backend.spring.service.TransactionService;
+import com.rinha_backend.exceptions.EntityNotFoundException;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +34,7 @@ public class Controller {
         try{
             ExtractDTO extract = extractService.getExtract(id);
             return ResponseEntity.ok(extract);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{ \"error\": \"Client not found\" }");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{ \"error\": \"Internal Error\" }");
@@ -45,13 +45,16 @@ public class Controller {
     public ResponseEntity<?> createTransaction(
             @PathVariable Integer id,
             @RequestBody TransactionRequestDTO dto) {
+        if(id == null || id <= 0) {
+            return ResponseEntity.status(422).body("{\"erro\": \"ID inválido\"}");
+        }
         try {
             TransactionResponseDTO response = transactionService.processTransaction(id, dto);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(422).body("{\"erro\": \"" + e.getMessage() + "\"}");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("{\"erro\": \"" + e.getMessage() + "\"}");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"erro\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("{\"erro\": \"Erro interno\"}");
         }

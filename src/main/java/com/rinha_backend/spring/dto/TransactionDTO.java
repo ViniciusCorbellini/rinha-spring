@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record TransactionDTO(
-        BigDecimal amount,
-        String type,
-        String description,
-        LocalDateTime created_at
+        BigDecimal valor,
+        String tipo,
+        String descricao,
+        LocalDateTime realizada_em
 ) {
     public static List<TransactionDTO> fromJsonArray(String json) {
         try {

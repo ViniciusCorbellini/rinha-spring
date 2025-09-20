@@ -2,7 +2,8 @@ package com.rinha_backend.spring.service;
 
 import com.rinha_backend.spring.dto.ExtractDTO;
 import com.rinha_backend.spring.repository.ExtractRepository;
-import org.springframework.dao.EmptyResultDataAccessException;
+import com.rinha_backend.exceptions.EntityNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,10 +15,10 @@ public class ExtractService {
         this.repository = repository;
     }
 
-    public ExtractDTO getExtract(int clientId) throws EmptyResultDataAccessException {
+    public ExtractDTO getExtract(int clientId) throws EntityNotFoundException {
         ExtractDTO extract = repository.getExtractByClientId(clientId);
 
-        if(extract == null) throw new EmptyResultDataAccessException("Client not found", 1);
+        if(extract == null) throw new EntityNotFoundException("Client not found");
 
         return extract;
     }

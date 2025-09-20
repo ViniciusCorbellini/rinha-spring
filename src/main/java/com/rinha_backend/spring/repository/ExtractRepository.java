@@ -37,10 +37,10 @@ public class ExtractRepository {
                 acc.data_extrato,
                 (
                     SELECT json_agg(json_build_object(
-                                'amount', t.amount,
-                                'type', t.type,
-                                'description', t.description,
-                                'created_at', t.created_at
+                                'valor', t.amount,
+                                'tipo', t.type,
+                                'descricao', t.description,
+                                'realizada_em', t.created_at
                             ))
                     FROM latest_transactions t
                 ) AS ultimas_transacoes

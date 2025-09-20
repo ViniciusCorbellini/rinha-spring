@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rinha_backend.spring.dto.account.AccountData;
 import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
 import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
+import com.rinha_backend.exceptions.EntityNotFoundException;
 
 @Repository
 public class TransactionRepository {    
@@ -20,7 +21,7 @@ public class TransactionRepository {
     }   
 
     @Transactional
-    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto) throws IllegalArgumentException, RuntimeException{
+    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto) throws IllegalArgumentException, EntityNotFoundException{
         AccountData account = jdbcTemplate.queryForObject(
             "SELECT limite, balance FROM accounts WHERE id = ? FOR UPDATE",
             (rs, rowNum) -> new AccountData(
@@ -31,7 +32,7 @@ public class TransactionRepository {
         );
 
         if (account == null) {
-            throw new RuntimeException("Cliente não encontrado");
+            throw new EntityNotFoundException("Cliente não encontrado");
         }
 
         BigDecimal accountLimit = account.limite();

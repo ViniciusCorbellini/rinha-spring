@@ -34,4 +34,4 @@ test:
 
 #Roda o script que inicia o teste em sh para linux
 wsl_test:
-	\_linux_run-test-launcher.sh
+	./_linux_run-test-launcher.sh
