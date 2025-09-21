@@ -4,8 +4,8 @@ import com.rinha_backend.spring.dto.ExtractDTO;
 import com.rinha_backend.spring.service.ExtractService;
 import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
 import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
+import com.rinha_backend.spring.exceptions.EntityNotFoundException;
 import com.rinha_backend.spring.service.TransactionService;
-import com.rinha_backend.exceptions.EntityNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,6 @@ public class Controller {
 
     @GetMapping("/{id}/extrato")
     public ResponseEntity<?> getExtrato(@PathVariable Integer id) {
-        if(id == null || id <= 0) return ResponseEntity.unprocessableEntity().body("{ \"error\": \"ID inválido\" }");
         try{
             ExtractDTO extract = extractService.getExtract(id);
             return ResponseEntity.ok(extract);
@@ -45,9 +44,6 @@ public class Controller {
     public ResponseEntity<?> createTransaction(
             @PathVariable Integer id,
             @RequestBody TransactionRequestDTO dto) {
-        if(id == null || id <= 0) {
-            return ResponseEntity.status(422).body("{\"erro\": \"ID inválido\"}");
-        }
         try {
             TransactionResponseDTO response = transactionService.processTransaction(id, dto);
             return ResponseEntity.ok(response);

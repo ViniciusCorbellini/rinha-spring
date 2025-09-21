@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rinha_backend.spring.dto.account.AccountData;
 import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
 import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
-import com.rinha_backend.exceptions.EntityNotFoundException;
+import com.rinha_backend.spring.exceptions.EntityNotFoundException;
 
 @Repository
 public class TransactionRepository {    

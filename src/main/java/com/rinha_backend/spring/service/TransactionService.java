@@ -19,26 +19,24 @@ public class TransactionService {
 
     public TransactionResponseDTO processTransaction(Integer clientId, TransactionRequestDTO dto)
             throws IllegalArgumentException, RuntimeException {
-        // 1. Validação da descrição
+        if(id == null || id <= 0) throw new IllegalArgumentException("Id invalido");
+
         String descricao = dto.getDescricao();
         if (descricao == null || descricao.isBlank() || descricao.length() > 10) {
             throw new IllegalArgumentException("Descricao invalida");
         }
 
-        // 2. Validação do tipo
         String tipo = dto.getTipo();
         if (!"c".equals(tipo) && !"d".equals(tipo)) {
             throw new IllegalArgumentException("Tipo invalido");
         }
 
-        // 3. Validação do valor
         BigDecimal valor = dto.getValor();
         if (valor == null || valor.signum() <= 0 || valor.scale() > 0) {
             // valor.signum() <= 0 garante que não seja nulo, zero ou negativo
             // valor.scale() > 0 verifica se há casas decimais (ou seja, não é inteiro)
             throw new IllegalArgumentException("Valor invalido");
         }
-
         return repository.processTransaction(clientId, dto);
     }
 }

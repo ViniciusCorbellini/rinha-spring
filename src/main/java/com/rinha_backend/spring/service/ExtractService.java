@@ -1,8 +1,8 @@
 package com.rinha_backend.spring.service;
 
 import com.rinha_backend.spring.dto.ExtractDTO;
+import com.rinha_backend.spring.exceptions.EntityNotFoundException;
 import com.rinha_backend.spring.repository.ExtractRepository;
-import com.rinha_backend.exceptions.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,9 @@ public class ExtractService {
         this.repository = repository;
     }
 
-    public ExtractDTO getExtract(int clientId) throws EntityNotFoundException {
+    public ExtractDTO getExtract(int clientId) throws EntityNotFoundException, IllegalArgumentException {
+        if(id == null || id <= 0) throw new IllegalArgumentException("Id invalido");
+
         ExtractDTO extract = repository.getExtractByClientId(clientId);
 
         if(extract == null) throw new EntityNotFoundException("Client not found");
