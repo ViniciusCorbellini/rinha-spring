@@ -59,8 +59,8 @@ public class ExtractRepository {
                         : List.of();
 
                 ExtractDTO.SaldoDto saldo = new ExtractDTO.SaldoDto(
-                        total != null ? total.toPlainString() : null,
-                        limite != null ? limite.toPlainString() : null,
+                        total,
+                        limite,
                         dataExtrato
                 );
 

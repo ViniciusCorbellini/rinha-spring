@@ -19,7 +19,7 @@ public class TransactionService {
 
     public TransactionResponseDTO processTransaction(Integer clientId, TransactionRequestDTO dto)
             throws IllegalArgumentException, RuntimeException {
-        if(id == null || id <= 0) throw new IllegalArgumentException("Id invalido");
+        if(clientId == null || clientId <= 0) throw new IllegalArgumentException("Id invalido");
 
         String descricao = dto.getDescricao();
         if (descricao == null || descricao.isBlank() || descricao.length() > 10) {

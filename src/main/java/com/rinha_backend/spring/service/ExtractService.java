@@ -15,8 +15,8 @@ public class ExtractService {
         this.repository = repository;
     }
 
-    public ExtractDTO getExtract(int clientId) throws EntityNotFoundException, IllegalArgumentException {
-        if(id == null || id <= 0) throw new IllegalArgumentException("Id invalido");
+    public ExtractDTO getExtract(Integer clientId) throws EntityNotFoundException, IllegalArgumentException {
+        if(clientId == null || clientId <= 0) throw new IllegalArgumentException("Id invalido");
 
         ExtractDTO extract = repository.getExtractByClientId(clientId);
 
