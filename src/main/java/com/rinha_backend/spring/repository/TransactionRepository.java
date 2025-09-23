@@ -1,63 +1,52 @@
 package com.rinha_backend.spring.repository;
 
-
-import java.math.BigDecimal;
-
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.rinha_backend.spring.dto.account.AccountData;
 import com.rinha_backend.spring.dto.transaction.TransactionRequestDTO;
 import com.rinha_backend.spring.dto.transaction.TransactionResponseDTO;
 import com.rinha_backend.spring.exceptions.EntityNotFoundException;
 
 @Repository
-public class TransactionRepository {    
-    private final JdbcTemplate jdbcTemplate;    
+public class TransactionRepository {
 
-    public TransactionRepository(JdbcTemplate jdbcTemplate) {   
-        this.jdbcTemplate = jdbcTemplate;   
-    }   
+    private final JdbcTemplate jdbcTemplate;
+
+    public TransactionRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Transactional
-    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto) throws IllegalArgumentException, EntityNotFoundException{
-        AccountData account = jdbcTemplate.queryForObject(
-            "SELECT limite, balance FROM accounts WHERE id = ? FOR UPDATE",
-            (rs, rowNum) -> new AccountData(
-                    rs.getBigDecimal("limite"),
-                    rs.getBigDecimal("balance")
-            ),
-            clientId
-        );
+    public TransactionResponseDTO processTransaction(int clientId, TransactionRequestDTO dto)
+            throws IllegalArgumentException, EntityNotFoundException {
+        String sql = "SELECT limite, novo_saldo FROM realizar_transacao(?, ?, ?, ?);";
 
-        if (account == null) {
-            throw new EntityNotFoundException("Cliente não encontrado");
-        }
+        try {
+            // Usando queryForObject porque espera-se apenas uma linha de retorno
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    (rs, rowNum) -> new TransactionResponseDTO(
+                            rs.getBigDecimal("limite"),
+                            rs.getBigDecimal("novo_saldo")
+                    ),
+                    clientId,
+                    dto.getValor(),
+                    dto.getTipo(),
+                    dto.getDescricao()
+            );
+        } catch (DataAccessException e) {
+            String causeMessage = e.getCause().getMessage();
 
-        BigDecimal accountLimit = account.limite();
-        BigDecimal balance = account.balance();
-        BigDecimal newBalance = balance;
-
-        if ("c".equals(dto.getTipo())) {
-            newBalance = newBalance.add(dto.getValor());
-        } else {
-            newBalance = newBalance.subtract(dto.getValor());
-            if (newBalance.compareTo(accountLimit.negate()) < 0) {
-                throw new IllegalArgumentException("Limite excedido");
+            if (causeMessage.contains("Cliente não encontrado")) {
+                throw new EntityNotFoundException(causeMessage);
             }
+            if (causeMessage.contains("Limite da conta excedido")) {
+                throw new IllegalArgumentException(causeMessage);
+            }
+            // Lança uma exceção genérica para outros erros inesperados do BD.
+            throw new RuntimeException("Erro inesperado ao processar a transação.", e);
         }
-
-        jdbcTemplate.update(
-            "UPDATE accounts SET balance = ? WHERE id = ?",
-            newBalance, clientId
-        );
-
-        jdbcTemplate.update(
-            "INSERT INTO transactions (amount, type, description, account_id) VALUES (?, ?, ?, ?)",
-            dto.getValor(), dto.getTipo(), dto.getDescricao(), clientId
-        );
-
-        return new TransactionResponseDTO(accountLimit, newBalance);
     }
 }

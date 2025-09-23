@@ -36,11 +36,11 @@ run_cmd() {
 # =============== Steps ===============
 
 wlog "[PASSO 1/5] Parando e removendo containers antigos (ignorar falhas)..."
-run_cmd "docker compose down -v" "ignore" docker compose down -v || true
+run_cmd "docker-compose down -v" "ignore" docker-compose down -v || true
 
 wlog ""
 wlog "[PASSO 2/5] Construindo e subindo novos containers (ignorar falhas)..."
-run_cmd "docker compose up -d --build --compatibility" "ignore" docker compose --compatibility up -d --build || true
+run_cmd "docker-compose --compatibility up -d --build" "ignore" docker-compose --compatibility up -d --build || true
 
 wlog ""
 wlog "[PASSO 3/5] Verificacao de Saude dos Containers..."
@@ -49,7 +49,7 @@ TIMEOUT=90
 DEADLINE=$(( $(date +%s) + TIMEOUT ))
 
 get_ids_for_service() {
-  docker compose ps -q "$1" 2>/dev/null | sed '/^$/d' || true
+  docker-compose ps -q "$1" 2>/dev/null | sed '/^$/d' || true
 }
 
 is_container_running() {
@@ -129,7 +129,7 @@ done
 if ! all_services_ready; then
   wlog ""
   wlog "--- ESTADO ATUAL DOS CONTAINERS ---"
-  docker compose ps | tee -a "${LOGFILE}" >/dev/null || true
+  docker-compose ps | tee -a "${LOGFILE}" >/dev/null || true
   wlog "Timeout: Nem todos os containers ficaram prontos em ${TIMEOUT} segundos."
   exit 1
 fi
@@ -137,7 +137,7 @@ fi
 # Postgres readiness + cleanup
 wlog ""
 wlog "[PASSO 4/5] Limpando o banco de dados..."
-PG_ID="$(docker compose ps -q postgres | head -n1 || true)"
+PG_ID="$(docker-compose ps -q postgres | head -n1 || true)"
 if [[ -z "${PG_ID}" ]]; then
   wlog "Aviso: container do postgres nao encontrado; pulando limpeza."
 else
