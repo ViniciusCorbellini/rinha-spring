@@ -92,7 +92,7 @@ run_cmd "docker compose down -v" "ignore" docker compose down -v || true
 
 wlog ""
 wlog "[PASSO 2/5] Construindo e subindo novos containers (ignorar falhas)..."
-run_cmd "docker compose up -d --build --compatibility" "ignore" docker compose --compatibility up -d --build || true
+run_cmd "docker compose up -d --build --compatibility --force-recreate " "ignore" docker compose --compatibility up -d --build --force-recreate || true
 # ^ Sobe os serviços em modo destacado (-d), reconstruindo imagens (--build),
 #   e ajustando recursos com --compatibility quando necessário.
 
@@ -234,6 +234,10 @@ else
   # ^ TRUNCATE transactions → remove transações anteriores
   #   UPDATE accounts SET balance = 0 → zera saldos para um estado conhecido
 fi
+
+wlog "Dormindo"
+sleep 30
+wlog "Acordando"
 
 # Gatling
 wlog ""
