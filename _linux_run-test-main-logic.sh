@@ -235,9 +235,9 @@ else
   #   UPDATE accounts SET balance = 0 → zera saldos para um estado conhecido
 fi
 
-wlog "Dormindo"
-sleep 30
-wlog "Acordando"
+wlog ""
+sleep 60
+wlog ""
 
 # Gatling
 wlog ""
