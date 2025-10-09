@@ -29,8 +29,8 @@ services:
     deploy:
         resources:
             limits:
-                cpus: "0.56"
-                memory: "90MB"
+                cpus: "0.80"
+                memory: "205MB"
 
     # Mapeamento de porta (host:container)
     # Permite acessar o banco via localhost:5433
@@ -75,8 +75,8 @@ services:
     deploy:
         resources:
             limits:
-                cpus: "0.37"
-                memory: "220MB"
+                cpus: "0.30"
+                memory: "165MB"
 
     restart: unless-stopped
 
@@ -107,8 +107,8 @@ services:
     deploy:
         resources:
             limits:
-                cpus: "0.37"
-                memory: "220MB"
+                cpus: "0.30"
+                memory: "165MB"
 
     restart: unless-stopped
 
@@ -137,8 +137,8 @@ services:
     deploy:
         resources:
             limits:
-                cpus: "0.2"
-                memory: "20MB"
+                cpus: "0.10"
+                memory: "15MB"
 
     restart: unless-stopped
 
