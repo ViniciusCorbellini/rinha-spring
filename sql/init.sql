@@ -66,6 +66,6 @@ BEGIN
     VALUES (p_account_id, p_valor, p_tipo, p_descricao);
 
     -- 4. Retorna o resultado
-    RETURN QUERY SELECT v_novo_saldo, conta.limite;
+    RETURN QUERY SELECT v_novo_saldo AS novo_saldo, conta.limite AS novo_limite;
 END;
 $$ LANGUAGE plpgsql;

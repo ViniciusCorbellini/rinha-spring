@@ -27,10 +27,10 @@ services:
 
 
     deploy:
-        resources:
-            limits:
-                cpus: "0.80"
-                memory: "205MB"
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: "120MB"
 
     # Mapeamento de porta (host:container)
     # Permite acessar o banco via localhost:5433
@@ -73,10 +73,10 @@ services:
         condition: service_healthy
 
     deploy:
-        resources:
-            limits:
-                cpus: "0.30"
-                memory: "165MB"
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "220MB"
 
     restart: unless-stopped
 
@@ -105,10 +105,10 @@ services:
         condition: service_healthy
 
     deploy:
-        resources:
-            limits:
-                cpus: "0.30"
-                memory: "165MB"
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "220MB"
 
     restart: unless-stopped
 
@@ -135,10 +135,10 @@ services:
       - app2
 
     deploy:
-        resources:
-            limits:
-                cpus: "0.10"
-                memory: "15MB"
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: "15MB"
 
     restart: unless-stopped
 
