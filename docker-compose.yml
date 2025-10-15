@@ -9,7 +9,7 @@ services:
   # Usa a imagem oficial do PostgreSQL versão 15
   # ----------------------------------------------------------
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: postgres
     restart: always
 
@@ -117,7 +117,7 @@ services:
   # Distribui requisições entre app1 e app2
   # ----------------------------------------------------------
   nginx:
-    image: nginx:latest
+    image: nginx:stable-alpine
     container_name: nginx
 
     # Mapeia porta do host para o container
