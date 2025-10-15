@@ -235,9 +235,9 @@ else
   #   UPDATE accounts SET balance = 0 → zera saldos para um estado conhecido
 fi
 
-wlog ""
+wlog "Dormindo até o spring iniciar."
 sleep 60
-wlog ""
+wlog "Acordando."
 
 # Gatling
 wlog ""
