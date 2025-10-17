@@ -30,7 +30,7 @@ services:
       resources:
         limits:
           cpus: "0.50"
-          memory: "120MB"
+          memory: "95MB"
 
     # Mapeamento de porta (host:container)
     # Permite acessar o banco via localhost:5433
@@ -117,7 +117,7 @@ services:
   # Distribui requisições entre app1 e app2
   # ----------------------------------------------------------
   nginx:
-    image: nginx:stable-alpine
+    image: nginx:alpine-slim
     container_name: nginx
 
     # Mapeia porta do host para o container
